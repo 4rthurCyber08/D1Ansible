@@ -1,0 +1,108 @@
+
+Find and Replace ( ctrl + h ): 
+
+	Your monitor number =  #$34T#
+
+Replace all ( ctrl + alt + enter)
+
+==========================================
+
+&nbsp;
+---
+&nbsp;
+
+### Step 1 - Setup FortiVM
+
+FortiVM:
+  Name: FW-#$34T#
+
+  | NetAdapter   |                    |
+  | ---          | ---                |
+  | NetAdapter   | NAT                |
+  | NetAdapter 2 | VMNet2             |
+  | NetAdapter 3 | VMNet3             |
+  | NetAdapter 4 | Bridge (Replicate) |
+  | NetAdapter x | Disconnect         |
+
+<br>
+
+- Login: admin
+- Pass: 
+  > New Password: C1sc0123
+  > Confirm Password: C1sc0123
+
+
+<br>
+
+
+__Reset Forti__
+~~~
+!@FortiVM
+execute factoryreset
+~~~
+
+
+&nbsp;
+---
+&nbsp;
+
+### Step 2 - Configure FW-#$34T#
+
+__Access Via SecureCRT__
+~~~
+!@FW-#$34T#
+get system interface physical
+~~~
+
+<br>
+
+~~~
+!@FW-#$34T#
+config system admin
+ edit rivan
+  set accprofile super_admin
+  set password pass
+  set vdom root
+  end
+config system interface
+ edit port1
+  set vdom root
+  set mode static
+  set ip 208.8.8.90/24
+  set allowaccess ping https ssh telnet http fgfm
+  set type physical
+  set status up
+  end
+~~~
+
+<br>
+
+~~~
+!@FW-#$34T#
+config system interface
+ edit port2
+  set vdom root
+  set mode static
+  set ip 192.168.102.90/24
+  set allowaccess ping https ssh telnet http
+  set type physical
+  set status up
+  next
+ edit port3
+  set vdom root
+  set mode static
+  set ip 192.168.103.90/24
+  set allowaccess ping https ssh telnet http
+  set type physical
+  set status up
+  next
+ edit port4
+  set vdom root
+  set mode static
+  set ip 10.#$34T#.1.90/24
+  set allowaccess ping https ssh telnet http
+  set type physical
+  set status up
+  end
+get system interface physical
+~~~
